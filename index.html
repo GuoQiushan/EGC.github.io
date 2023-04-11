@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <meta charset="utf-8">
+    <meta property="og:title" content="EGC: Image Generation and Classification via a Single Energy-Based Model" />
+    <meta property="og:description" content="EGC: Image Generation and Classification via a Single Energy-Based Model" />
+    <meta property="og:url" content="https://egcdiff.github.io/" />
+    <meta property="og:image" content="https://egcdiff.github.io//static/images/overview.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="628" />
+    <meta name="description"
+        content="EGC: Image Generation and Classification via a Single Energy-Based Model." />
+    <meta name="keywords"
+        content="diffusion models, generative models, image classification, supervised learning, classification, Bayes' theorem, Energy-Based Model, computer vision, deep learning, robustness" />
+    <meta name="viewport" content="initial-scale=1" />
+    <!-- twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EGC" />
+    <meta name="twitter:description"
+        content="EGC: Image Generation and Classification via a Single Energy-Based Model." />
+    <meta name="twitter:url" content="https://egcdiff.github.io/" />
+    <meta name="twitter:image" content="https://egcdiff.github.io/static/images/overview.png" />
+    <meta name="twitter:image:src" content="https://egcdiff.github.io/static/images/overview.png" />
+    <meta name="twitter:image_alt" content="EGC" />
+
+    <title>EGC: Image Generation and Classification via a Single Energy-Based Model</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RYWGEJGP6S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-RYWGEJGP6S');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="stylesheet" href="https://use.typekit.net/iag3ven.css">
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-coy.min.css"/> -->
+    <link rel="stylesheet" href="./static/css/prism.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.0.1/prism-bibtex.min.js">
+    </script>
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔎</text></svg>">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+
+    <!-- mathjax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <p style="padding: 20px;" />
+                        <h1 class="title is-1 publication-title">
+                            <span id="main-title">
+                                EGC: Image Generation and Classification via a Single Energy-Based Model
+                            </span>
+                        </h1>
+                        <div class="is-size-5 publication-authors">
+                            <!-- TODO: FIX -->
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=nDLaim4AAAAJ&hl=zh-CN" target="_blank">Qiushan Guo</a>
+                            </span>
+                            &nbsp;
+                            &nbsp;
+                            <span class="author-block">
+                                Chuofan Ma
+                            </span>
+                            &nbsp;
+                            &nbsp;
+                            <span class="author-block">
+                                Yi Jiang
+                            </span>
+                            &nbsp;
+                            &nbsp;
+                            <span class="author-block">
+                                Zehuan Yuan
+                            </span>
+                            &nbsp;
+                            &nbsp;
+                            <span class="author-block">
+                                <a href="https://i.cs.hku.hk/~yzyu/" target="_blank">Yizhou Yu</a>
+                            </span>
+                            &nbsp;
+                            &nbsp;
+                            <span class="author-block">
+                                <a href="http://luoping.me/" target="_blank">Ping Luo</a>
+                            </span>
+                        </div>
+                        <p style="padding: 0.25rem;" />
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">The University of Hong Kong</span>
+                            &nbsp;
+                            &nbsp;
+                            <span class="author-block">ByteDance Inc.</span>
+                            <!-- <br style="line-height: 2px" /> -->
+                            <!-- <span class="author-block" style="font-size: 0.7em; font-style: italic;"><sup>*</sup>Equal
+                                contribution</span> -->
+
+                        </div>
+
+                        <p style="padding: 20px;" />
+
+                        <div class="buttons is-centered">
+                            <button class="external-link button is-medium is-ghost publication-links is-rounded">
+                                <a href="https://arxiv.org/abs/2304.02012" target="_blank"
+                                    style="text-decoration:none;">
+                                    <span class="icon is-small">
+                                        <i class="ai ai-arxiv"></i>
+                                    </span>
+                                    <span>arXiv</span>
+                                </a>
+                            </button>
+                            <button class="external-link button is-medium is-ghost publication-links is-rounded">
+                                <a href="./static/docs/EGC.pdf" target="_blank">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </span>
+                                    <span>pdf</span>
+                                </a>
+                            </button>
+                            <!-- <button class="external-link button is-medium is-ghost publication-links is-rounded">
+                                <a href="https://youtu.be/1hYtGZ0CUSA" target="_blank">
+                                    <span class="icon">
+                                        <i class="fab fa-youtube"></i>
+                                    </span><span>video</span>
+                                </a>
+                            </button> -->
+                            <!-- <button class="external-link button is-medium is-ghost publication-links is-rounded">
+                                <a href="./static/docs/InternetExplorer.pptx" target="_blank">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-file-powerpoint"></i>
+                                    </span>
+                                    <span>slides</span>
+                                </a>
+                            </button> -->
+                            <button class="external-link button is-medium is-ghost publication-links is-rounded">
+                                <a href="https://github.com/GuoQiushan/EGC" target="_blank">
+                                    <span class="icon is-small">
+                                        <i class="fab fa-github"></i>
+                                    </span>
+                                    <span>code</span>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- hack to pull the below up vertically -->
+    <span style="display:block; margin-top:-1.75em;"/>
+
+        <!-- Method Overview -->
+    <section class="section" id="method-overview">
+        <div class="container is-max-widescreen">
+            <div class="columns is-centered has-text-centered">
+                <div class="column" style="border-radius: 10px; background-color: rgb(245,245,245)">
+                    <h2 class="title is-3">
+                        <span class="method-name">EGC: Image Generation and Classification via a Single Energy-Based Model</span>
+                    </h2>
+                    <p style="padding: 10px;" />
+                    <div id="method-overview-wrapper">
+                        <img src="./static/images/overview.png" alt="EGC: Image Generation and Classification via a Single Energy-Based Model"
+                            class="method-overview-full-img  method-overview" draggable="false" />
+                    </div>
+                            <p style="padding: 10px;" />
+                        <div class="method-overview-text has-text-justified">
+                            <p>
+                                (A) Diffusion Model estimates the score (noise) from the noisy scaled image. 
+                                (B) Standard Classification Model outputs the logits for minimizing the cross-entropy loss. 
+                                (C) GAN Model is composed of a generator model that synthesizes new samples and a discriminator that classifies samples as either real or fake. 
+                                (D) <span class="method-name">EGC</span> Model estimates the joint distribution \(p(\mathbf x, y)\) for classification via the forward propagation of a neural network 
+                                and leverages the score estimated from the backward propagation to generate samples from Gaussian noise. 
+                                \(Z\) represents the normalizing constant, which is only relevant to the model parameters.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/ Method Overview -->
+
+    <!-- <p style="padding: 10px;" /> -->
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <!-- Abstract. -->
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-three-quarters">
+                    <h2 class="title is-3">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Learning image classification and image generation using the same set of network parameters is a challenging problem. 
+                            Recent advanced approaches perform well in one task often exhibit poor performance in the other. 
+                            This work introduces an energy-based classifier and generator, namely EGC, which can achieve superior performance in both tasks using a single neural network.
+                        </p>
+                        <p>
+                            Unlike a conventional classifier that outputs a label given an image (\ie, a conditional distribution \(p(y|\mathbf{x}))\), 
+                            the forward pass in EGC is a classifier that outputs a joint distribution \(p(\mathbf{x},y)\), enabling an image generator in its backward pass by marginalizing out the label \(y\). 
+                            This is done by estimating the classification probability given a noisy image from the <span class="method-name">diffusion process</span> in the forward pass, 
+                            while denoising it using the score function estimated in the backward pass.
+                            EGC achieves competitive generation results compared with state-of-the-art approaches on ImageNet-1k, CelebA-HQ and LSUN Church, 
+                            while achieving superior classification accuracy and robustness against adversarial attacks on CIFAR-10. 
+                            This work represents the first successful attempt to simultaneously excel in both tasks using a single set of network parameters.
+                            We believe that EGC bridges the gap between discriminative and generative learning.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!--/ Abstract. -->
+
+
+            <!-- Paper video. -->
+            <!-- <p style="padding: 20px;" /> -->
+            <!-- <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Video</h2>
+                    <div class="publication-video">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/1hYtGZ0CUSA"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div> -->
+            <!--/ Paper video. -->
+        </div>
+    </section>
+
+    <p style="padding: 20px;" />
+
+    <!-- Derivation. -->
+    <section>
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-three-quarters">
+                    <h2 class="title is-3">
+                        EGC with Diffusion Process
+                    </h2>
+                    <div class="content has-text-justified">
+                        <p class="equation-text">
+                            An energy-based model is defined as:
+                        </p>
+                        <p class="equation">
+                            \begin{equation}
+                                p_{\theta}(\mathbf{x}) = \frac{\mathrm{exp}(f_{\theta}(\mathbf{x}))}{Z(\theta)},
+                                \label{Eq:energy}
+                            \end{equation}
+                        </p>
+
+                        <p class="equation-text">
+                            For an arbitrary timestep \(t\), one can directly sample from the following Gaussian distribution without iterative sampling:
+                        </p>
+                        <p class="equation">
+                            \begin{equation}
+                            q(\mathbf{x}_{t}|\mathbf{x}_{0}) = \mathcal{N}(\mathbf{x}_{t}; \sqrt{\bar{\alpha}_t}\mathbf{x}_{0}, (1-\bar{\alpha}_t)\mathbf{I})
+                            \label{Eq:qt}
+                            \end{equation}
+                        </p>
+                        <p class="equation-text">
+                            According to Tweedie's Formula, one can estimate the mean of a Gaussian distribution, 
+                            given a random variable \(\mathbf{z} \sim \mathcal{N}(\mathbf{z}; \mathbf{\mu}_{z}, \mathbf{\Sigma}_{z})\)
+                        </p>
+                        <p class="equation">
+                            \begin{equation}
+                            \mathbb{E}[{\mu}_{z}|\mathbf{z}] = \mathbf{z} + {\Sigma}_{z} \nabla_{\mathbf{z}} \mathrm{log} p(\mathbf{z})
+                            \end{equation}
+                        </p>
+                        <p class="equation-text">
+                            The score function \(\nabla_{\mathbf{x}_t} \mathrm{log} q(\mathbf{x}_t|\mathbf{x}_0)\) can be expressed as:
+                        </p>
+                        <p class="equation">
+                            \begin{equation}
+                            \nabla_{\mathbf{x}_t} \mathrm{log} q(\mathbf{x}_t|\mathbf{x}_0) = - \frac{{\epsilon}_t}{\sqrt{1-\bar{\alpha}_t}}
+                            \label{Eq:score}
+                            \end{equation}
+                        </p>
+                        
+                        <p class="equation-text">
+                            We approximate the probability density function \(q(\mathbf{x}_t|\mathbf{x}_0)\) by an Energy-based model \(p_{\theta}(\mathbf{x}_t)\), 
+                            and optimize the parameters by minimizing the Fisher divergence between \(q(\mathbf{x}_t|\mathbf{x}_0)\) and \(p_{\theta}(\mathbf{x}_t)\):
+                        </p>
+
+                        <p class="equation">
+                            \begin{equation}
+                            \mathcal{D}_{F} = \mathbb{E}_q[\frac{1}{2}\| \nabla_{\mathbf{x}_t} \mathrm{log} q(\mathbf{x}_t|\mathbf{x}_0) - \nabla_{\mathbf{x}_t} \mathrm{log} p_{\theta}(\mathbf{x}_t) \|^2]
+                            \label{Eq:fisher}
+                            \end{equation}
+                        </p>
+
+                        <p class="equation-text">
+                            Compared with directly optimizing the log-probability of EBM, 
+                            Fisher divergence circumvents optimizing the normalized densities parameterized by \(Z(\theta)\) 
+                            and the target score can be directly sampled from a Gaussian distribution.
+                            <span class="method-name">Now, we can train an unsupervised EBM with Diffusion Process to generate sample from Gaussian Noise.</span>
+                        </p>
+
+                        <p class="equation-text">
+                            EBM has an inherent connection with discriminative models. For the classification problem with \(K\) classes, 
+                            the probability of \(y\)-th label is represented using the Softmax function:
+                        </p>
+
+                        <p class="equation">
+                            \begin{equation}
+                            p(y | \mathbf{x}) = \frac{p(\mathbf{x}, y)}{\sum_{y'}p(\mathbf{x}, y')} = \frac{\mathrm{exp}(f(\mathbf{x})[y])}{\sum_{y'}\mathrm{exp}(f(\mathbf{x})[y'])},
+                            \label{Eq:softmax}
+                            \end{equation}
+                        </p>
+
+                        <p class="equation-text">
+                            We can model the joint probability of data sample \(\mathbf{x}\) and label \(y\) as:
+                        </p>
+
+                        <p class="equation">
+                            \begin{equation}
+                            p_{\theta}(\mathbf{x}, y) = \frac{\mathrm{exp}(f_{\theta}(\mathbf{x})[y])}{Z(\theta)}
+                            \end{equation}
+                        </p>
+                        
+                        <p class="equation-text">
+                            The joint probability \(p_{\theta}(\mathbf{x}_t, y)\) is parameterized with a neural network. 
+                            And the forward propagation of our EGC model is a discrimination model to predict the conditional probability \(p_{\theta}(y | \mathbf{x})\), 
+                            while the backward propagation of the neural network is a generation model to predict the score and classifier guidance to gradually denoise data.
+                        </p>
+
+                        <p class="equation-text">
+                            Overall, the training loss of an EGC model is formulated as:
+                        </p>
+
+                        <p class="equation">
+                            \begin{equation}
+                            \begin{split}
+                            \mathcal{L} = &\ \mathbb{E}_q[\frac{1}{2}\| \nabla_{\mathbf{x}_t} \mathrm{log} q(\mathbf{x}_t|\mathbf{x}_0) - \nabla_{\mathbf{x}_t}\mathrm{log} p_{\theta}(\mathbf{x}_t) \|^2 \\
+                                        & - \sum_{i=1}^{C} q(y_i|\mathbf{x}_t, \mathbf{x}_0)\ \mathrm{log} p_{\theta}(y_i | \mathbf{x}_t)],
+                            \end{split}
+                            \end{equation}
+                        </p>
+
+                        <p class="equation-text">
+                            where the first term is reconstruction loss for a noised sample, the second term is a classification loss that encourages the denoising process to generate samples that are consistent with the given labels.
+                        </p>
+
+                        <p class="equation-text">
+                            One of the advantage of integrating the energy-based classifier with diffusion process is that the classifier provides guidance <span class="method-name">in one backward step</span>
+                            to explicitly control the data we generate through conditioning information \(y\).
+                        </p>
+                        
+                        <p class="equation">
+                            \begin{equation}
+                            \nabla \mathrm{log} p_{\theta}(\mathbf{x} | y) = \nabla \mathrm{log} p_{\theta}(\mathbf{x}_t) + \nabla \mathrm{log} p_{\theta}(y | \mathbf{x}_t)
+                            \end{equation}
+                        </p>
+
+                        <p style="padding: 10px;" />
+                        <div class="container is-max-desktop">
+                            <div class="columns is-centered has-text-centered">
+                                
+                                    <figure>
+                                        <img src="./static/images/compare.png" alt="comparison" id="comparison"
+                                            draggable="false" />
+                                        <figcaption>
+                                            Comparison of conditional generation between EGC and explicit classifier-guided model.
+                                        </figcaption>
+                                    </figure>
+                                
+                            </div>
+                        </div>
+                        <p style="padding: 20px;" />
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/ Derivation. -->
+
+    <p style="padding: 20px;" />
+    <section class="section">
+        
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-three-quarters">
+                    <h2 class="title is-3">ImageNet Results</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We train <span class="method-name">EGC</span> model on ImageNet-1k 256x256 and follow <a target="_blank" href="https://github.com/Stability-AI/stablediffusion">Stable
+                                Diffusion</a> to convert images at 256x256 to 32x32, using the pre-trained image autoencoder provided. 
+                                Remarkably, EGC achieves superior performance in both tasks with a single neural network, 
+                                demonstrating its effectiveness in bridging the gap between discriminative and generative learning.
+                            
+                        <p style="padding: 10px;" />
+                        <div class="container is-max-desktop">
+                            <div class="columns is-centered has-text-centered">
+                                
+                                    <figure>
+                                        <img src="./static/images/scatter.png" alt="scatter" id="scatter"
+                                            draggable="false" />
+                                        <figcaption>
+                                            Results on ImageNet.
+                                        </figcaption>
+                                    </figure>
+                                
+                            </div>
+                        </div>
+                        <p style="padding: 20px;" />
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </section>
+
+    <p style="padding: 20px;" />
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-three-quarters">
+                    <h2 class="title is-3">Visualization</h2>
+                    <div class="content has-text-justified">
+                        <p class="equation-text">
+                            We adopt a direct optimization of the Fisher divergence instead of the probability \(p_\theta(\mathbf{x}_t)\).
+                            Therefore, we are interested to see whether the neural network would effectively model the target Gaussian distribution.
+                            Given the difficulty in illustrating a high-dimensional Gaussian distribution, 
+                            we present that the unnormalized probability density of noised sample \(\mathbf{x}_t\).
+                            Tthe density exhibits a similar shape to the folded normal distribution, 
+                            suggesting that the probability distribution learned by the neural network closely approximates the Gaussian distribution.
+                            We further select two orthogonal noises \(\mathbf{z}_1 \bot \mathbf{z}_2\) to plot the two-dimensional probability density function, 
+                            which exhibits a similar shape to the Gaussian distribution.
+                        </p>
+
+                        <div class="container is-max-desktop">
+                            <div class="columns is-centered has-text-centered">
+                                
+                                    <figure>
+                                        <img src="./static/images/energy.png" alt="energy" id="energy"
+                                            draggable="false" />
+                                        <figcaption>
+                                            Visualization of probability density.
+                                        </figcaption>
+                                    </figure>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content has-text-justified">
+                        <p class="equation-text">
+                            A promising application of energy-based models is to use the learned prior model for filling masked regions of an image with new content.
+                            We obtain a sequence of masked noisey image at different timesteps and fill the masked pixels with the denoised sample given the previous iteration.
+                        </p>
+                       
+
+                        <div class="container is-max-desktop">
+                            <div class="columns is-centered has-text-centered">
+                                
+                                    <figure>
+                                        <img src="./static/images/inpainting.png" alt="energy" id="energy"
+                                            draggable="false" />
+                                        <figcaption>
+                                            Visualization of inpainting.
+                                        </figcaption>
+                                    </figure>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content has-text-justified">
+                        <p class="equation-text">
+                            We perform an interpolation between the initial white noise samples \(\mathbf{x}_{T}\). 
+                            We compare the generated samples from the interpolated noise with the samples obtained through interpolation in the generated samples \(\mathbf{x}_{0}\). 
+                            The results demonstrate that our method exhibits superior semantic interpolation effects compared to direct interpolation of generated samples in latent space.
+                        </p>
+                       
+                        <div class="container is-max-desktop">
+                            <div class="columns is-centered has-text-centered">
+                                
+                                    <figure>
+                                        <img src="./static/images/interpolate.png" alt="energy" id="energy"
+                                            draggable="false" />
+                                        <figcaption>
+                                            Visualization of semantic interpolation.
+                                        </figcaption>
+                                    </figure>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                        
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <section class="section" id="paper">
+        <div class="container is-mobile">
+            <div class="columns is-centered has-text-centered">
+                <div class="container content">
+                    <h2 class="title is-3">BibTeX</h2>
+                    <div id="bibtex" class="column has-text-justified is-centered">
+                        <!-- https://github.com/SaswatPadhi/prismjs-bibtex -->
+                        <pre><code class="language-bibtex">@article{
+    guo2023egc,
+    title={EGC: Image Generation and Classification via a Single Energy-Based Model},
+    author={Guo, Qiushan and Ma, Chuofan and Jiang, Yi and Yuan, Zehuan and Yu, Yizhou and Luo, Ping},
+    journal={arXiv preprint arXiv:2304.02012},
+    year={2023}
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <!-- TODO: UPDATE -->
+                <a class="icon-link" href="https://arxiv.org/abs/2304.02012" target="_blank">
+                    <i class="ai ai-arxiv"></i>
+                </a>
+                &nbsp;
+                <!-- TODO: UPDATE -->
+                <a class="icon-link" href="./static/docs/EGC.pdf" target="_blank">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+                &nbsp;
+                <a class="icon-link" href="https://github.com/GuoQiushan/EGC"
+                    target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <div class="columns is-centered">
+                <div class="content">
+                    <p>
+                        Page source code was adapted from
+                        <a href="https://nerfies.github.io" target="_blank">here</a>
+                        and
+                        <a href="https://internet-explorer-ssl.github.io"
+                            target="_blank">here</a>.
+                    </p>
+                </div>
+            </div>
+    </footer>
+
+    <script src="./static/js/index.js"></script>
+    <script src="./static/js/prism.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.0.1/prism-bibtex.js"
+        integrity="sha256-+dK6uqUp/DnP6ef97s8XcoynBnGe5vM5gvBECH0EB3U=" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>
